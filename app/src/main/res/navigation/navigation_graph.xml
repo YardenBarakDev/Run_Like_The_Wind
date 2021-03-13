@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/run_Fragment">
+
+
+    <fragment
+        android:id="@+id/run_Fragment"
+        android:name="com.YBDev.runlikethewind.fragments.Run_Fragment"
+        android:label="fragment_runs"
+        tools:layout="@layout/fragment_runs" >
+        <action
+            android:id="@+id/action_run_Fragment_to_trackingFragment"
+            app:destination="@id/trackingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settings_Fragment"
+        android:name="com.YBDev.runlikethewind.fragments.Settings_Fragment"
+        android:label="fragment_settings_"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/statistics_Fragment"
+        android:name="com.YBDev.runlikethewind.fragments.Statistics_Fragment"
+        android:label="fragment_statistics"
+        tools:layout="@layout/fragment_statistics" />
+    <fragment
+        android:id="@+id/trackingFragment"
+        android:name="com.YBDev.runlikethewind.fragments.TrackingFragment"
+        android:label="fragment_tracking"
+        tools:layout="@layout/fragment_tracking" >
+        <action
+            android:id="@+id/action_trackingFragment_to_run_Fragment"
+            app:destination="@id/run_Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/setupFragment"
+        android:name="com.YBDev.runlikethewind.fragments.SetupFragment"
+        android:label="SetupFragment" >
+        <action
+            android:id="@+id/action_setupFragment_to_run_Fragment"
+            app:destination="@id/run_Fragment" />
+    </fragment>
+</navigation>
