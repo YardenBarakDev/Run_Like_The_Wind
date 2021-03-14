@@ -41,6 +41,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment:2.3.4"
+    implementation "androidx.navigation:navigation-ui:2.3.4"
+
     //google
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
@@ -58,4 +62,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel:2.3.0"
     // // Annotation processor Java8
     implementation "androidx.lifecycle:lifecycle-common-java8:2.3.0"
+
+    // MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    //EasyPermissions
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }

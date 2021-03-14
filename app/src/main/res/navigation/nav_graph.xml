@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/run_Fragment">
+    app:startDestination="@id/setupFragment">
 
+    <action android:id="@+id/action_global_trackingFragment"
+        app:destination="@id/trackingFragment"
+        app:launchSingleTop="true" />
 
     <fragment
         android:id="@+id/run_Fragment"
-        android:name="com.YBDev.runlikethewind.fragments.Run_Fragment"
+        android:name="com.YBDev.runlikethewind.fragments.RunFragment"
         android:label="fragment_runs"
         tools:layout="@layout/fragment_runs" >
         <action
@@ -17,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/settings_Fragment"
-        android:name="com.YBDev.runlikethewind.fragments.Settings_Fragment"
+        android:name="com.YBDev.runlikethewind.fragments.SettingsFragment"
         android:label="fragment_settings_"
         tools:layout="@layout/fragment_settings" />
     <fragment
@@ -42,4 +45,6 @@
             android:id="@+id/action_setupFragment_to_run_Fragment"
             app:destination="@id/run_Fragment" />
     </fragment>
+
+
 </navigation>
