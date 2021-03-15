@@ -1,6 +1,7 @@
 package com.YBDev.runlikethewind.fragments;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import com.YBDev.runlikethewind.R;
+import com.YBDev.runlikethewind.services.TrackingService;
 import com.YBDev.runlikethewind.util.Constants;
 import com.YBDev.runlikethewind.util.TrackingUtility;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -48,10 +50,7 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
         NavHostFragment.findNavController(this).navigate(R.id.action_run_Fragment_to_trackingFragment);
     }
 
-    private void findViews() {
-        RunFragment_FAB_create_new_run = view.findViewById(R.id.RunFragment_FAB_create_new_run);
 
-    }
 
 
 
@@ -63,7 +62,7 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
             EasyPermissions.requestPermissions(
                     this,
                     "You need to accept location permissions to use this app.",
-                    Constants.REQUEST_CODE_LOCATION_PERMISSION,
+                    Constants.KEYS.REQUEST_CODE_LOCATION_PERMISSION,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION
             );
@@ -71,7 +70,7 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
             EasyPermissions.requestPermissions(
                     this,
                     "You need to accept location permissions to use this app.",
-                    Constants.REQUEST_CODE_LOCATION_PERMISSION,
+                    Constants.KEYS.REQUEST_CODE_LOCATION_PERMISSION,
                     Manifest.permission.ACCESS_COARSE_LOCATION,
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -95,5 +94,10 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    private void findViews() {
+        RunFragment_FAB_create_new_run = view.findViewById(R.id.RunFragment_FAB_create_new_run);
+
     }
 }

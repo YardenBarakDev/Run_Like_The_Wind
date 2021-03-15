@@ -7,10 +7,14 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.YBDev.runlikethewind.R;
+import com.YBDev.runlikethewind.services.TrackingService;
+import com.YBDev.runlikethewind.util.Constants;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class StartActivity extends AppCompatActivity {
@@ -22,9 +26,8 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
         setUpNavigation();
-
+        navigateToTrackingFragment(getIntent());
         NavHostFragment.findNavController(navHostFragment).addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
@@ -39,6 +42,18 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        navigateToTrackingFragment(intent);
+    }
+
+    private void navigateToTrackingFragment(Intent intent){
+        if (intent.getAction().equals(Constants.KEYS.ACTION_SHOW_TRACKING_FRAGMENT)){
+            NavHostFragment.findNavController(navHostFragment).navigate(R.id.action_global_trackingFragment);
+        }
+    }
+
     public void setUpNavigation(){
         bottomNavigationView =findViewById(R.id.bttm_nav);
         navHostFragment = (NavHostFragment)getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
@@ -46,5 +61,12 @@ public class StartActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(this, TrackingService.class);
+        intent.setAction(Constants.KEYS.ACTION_STOP_SERVICE);
+        stopService(intent);
 
+    }
 }

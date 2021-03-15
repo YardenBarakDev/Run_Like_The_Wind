@@ -8,7 +8,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class TrackingUtility {
 
-    public boolean hasLocationPermissions(Context context) {
+    public static boolean hasLocationPermissions(Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             return EasyPermissions.hasPermissions(
                     context,
