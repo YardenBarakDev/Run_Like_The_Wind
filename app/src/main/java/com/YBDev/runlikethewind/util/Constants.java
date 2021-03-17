@@ -19,8 +19,8 @@ public class Constants {
             String NOTIFICATION_CHANNEL_NAME = "Tracking";
             int NOTIFICATION_ID = 1;
 
-            long LOCATION_UPDATE_INTERVAL = 5000L;
-            long FASTEST_LOCATION_INTERVAL = 2000L;
+            long LOCATION_UPDATE_INTERVAL = 10000L;
+            long FASTEST_LOCATION_INTERVAL = 5000L;
 
 
             //MAP

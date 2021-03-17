@@ -1,7 +1,6 @@
 package com.YBDev.runlikethewind.fragments;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,10 +19,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.button.MaterialButton;
-
 import java.util.ArrayList;
 
 public class TrackingFragment extends Fragment {
@@ -35,7 +32,7 @@ public class TrackingFragment extends Fragment {
     private MapView TrackingFragment_MapView_map;
 
     private ArrayList<LatLng> latLngs;
-    private boolean isTracking = true;
+    private boolean isTracking = false;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -46,7 +43,7 @@ public class TrackingFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap map) {
                 googleMap = map;
-                addAllPolylines();
+                //addAllPolylines();
             }
         });
         subscribeToObservers();
@@ -60,12 +57,11 @@ public class TrackingFragment extends Fragment {
             }
         });
 
-        TrackingService.pathPoints.observe(getViewLifecycleOwner(), new Observer<ArrayList<ArrayList<LatLng>>>() {
+        TrackingService.pathPoints.observe(getViewLifecycleOwnerLiveData().getValue(), new Observer<ArrayList<ArrayList<LatLng>>>() {
             @Override
             public void onChanged(ArrayList<ArrayList<LatLng>> arrayLists) {
               for (int i = 0; i < arrayLists.size(); i++){
                   for (int j = 0; j < arrayLists.get(i).size(); j++){
-                      Log.d("jjjj", "pathPoints");
                       latLngs.add(arrayLists.get(i).get(j));
                       addLatestPolyline();
                       moveCamera();
@@ -74,6 +70,8 @@ public class TrackingFragment extends Fragment {
             }
         });
     }
+
+
 
     private void toggleRun(){
         if (isTracking){
@@ -86,14 +84,16 @@ public class TrackingFragment extends Fragment {
     private void updateTracking(boolean tracking){
         isTracking = tracking;
         if (!isTracking){
-            //...
-            //...
-            //...
+
         }
     }
     private void moveCamera(){
-        if (latLngs != null && latLngs.size() > 1){
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size()-1), Constants.KEYS.MAP_ZOOM));
+        if (latLngs != null && latLngs.size() > 0){
+           // googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size()-1), Constants.KEYS.MAP_ZOOM));
+           // googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLngs.get(latLngs.size()-1)), Constants.KEYS.MAP_ZOOM);
+
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size() - 1), 20f));
+
         }
     }
     private void addAllPolylines(){
@@ -101,6 +101,8 @@ public class TrackingFragment extends Fragment {
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions .color(R.color.primary).
                     width(Constants.KEYS.POLYLINE_WIDTH).addAll(latLngs);
+            googleMap.addPolyline(polylineOptions);
+
         }
     }
 
@@ -108,6 +110,8 @@ public class TrackingFragment extends Fragment {
         if (latLngs != null && latLngs.size() > 1){
             LatLng lastPolyline = latLngs.get(latLngs.size()-1);
             LatLng secondLastPolyline = latLngs.get(latLngs.size()-2);
+            Log.d("jjjjj", "last    lat" + latLngs.get(latLngs.size()-1).latitude +  " lon" + latLngs.get(latLngs.size()-1).longitude);
+            Log.d("jjjjj", "before last    lat" + latLngs.get(latLngs.size()-2).latitude +  " lon" + latLngs.get(latLngs.size()-2).longitude);
 
             PolylineOptions polylineOptions = new PolylineOptions()
                     .color(R.color.primary).

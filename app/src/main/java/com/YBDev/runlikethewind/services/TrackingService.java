@@ -35,25 +35,19 @@ public class TrackingService extends LifecycleService {
 
     public static MutableLiveData<Boolean> isTracking = new MutableLiveData<>();
     public static MutableLiveData<ArrayList<ArrayList<LatLng>>> pathPoints = new MutableLiveData<>(); //polylines
-
-
+    private ArrayList<ArrayList<LatLng>> polylines;
+    private ArrayList<LatLng> polyline;
+    //polylines = ArrayList<ArrayList<LatLng>>
+    //polyline =  ArrayList<LatLng>
     @Override
     public void onCreate() {
         super.onCreate();
         initValues();
         fusedLocationProviderClient = new FusedLocationProviderClient(this);
-
         isTracking.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 updateLocationTracking(aBoolean);
-            }
-        });
-
-        pathPoints.observe(this, new Observer<ArrayList<ArrayList<LatLng>>>() {
-            @Override
-            public void onChanged(ArrayList<ArrayList<LatLng>> arrayLists) {
-
             }
         });
     }
@@ -80,14 +74,7 @@ public class TrackingService extends LifecycleService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void addEmptyPolyline() {
-        ArrayList<ArrayList<LatLng>> arrayLists = new ArrayList<>();
-        ArrayList<LatLng> arrayLists2 = new ArrayList<>();
-        arrayLists.add(arrayLists2);
-        pathPoints.setValue(arrayLists);
-        pathPoints.postValue(arrayLists);
 
-    }
 
 
     @SuppressLint("MissingPermission")//checked using EasyPermissions
@@ -119,7 +106,6 @@ public class TrackingService extends LifecycleService {
            if (isTracking.getValue() != null){
                for (Location location : locationResult.getLocations()){
                    addPathPoint(location);
-                   Log.d("jjjj", "lat" + location.getLatitude()+ " lon" + location.getLongitude());
                }
            }
        }
@@ -127,23 +113,39 @@ public class TrackingService extends LifecycleService {
 
     private void addPathPoint(Location location){
         if (location != null){
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLatitude());
-            pathPoints.getValue().get(pathPoints.getValue().size() - 1 ).add(latLng);
+
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            //pathPoints.getValue().get(pathPoints.getValue().size() - 1 ).add(latLng);
+            polyline.add(latLng);
+            polylines.add(polyline);
+            pathPoints.postValue(polylines);
+
+
         }
     }
 
+    private void addEmptyPolyline() {
+        if (polylines != null){
+            polylines.get(polylines.size()).add(new LatLng(0,0));
+            pathPoints.postValue(polylines);
+        }else{
+            initValues();
+            addEmptyPolyline();
+        }
+    }
 
     private void initValues(){
-        isTracking = new MutableLiveData<>();
-        pathPoints = new MutableLiveData<>();
+        //isTracking = new MutableLiveData<>();
+        //pathPoints = new MutableLiveData<>();
+        polylines = new ArrayList<>();
+        polyline = new ArrayList<>();
 
-        ArrayList <ArrayList<LatLng>> arrayLists = new ArrayList<>();
-        LatLng latLng = new LatLng(0,0);
-        isTracking.setValue(false);
-        pathPoints.setValue(arrayLists);
+        isTracking.postValue(true);
+        pathPoints.postValue(polylines);
     }
+
     private void startForegroundService(){
-        addEmptyPolyline();
+        //addEmptyPolyline();
         isTracking.postValue(true);
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
