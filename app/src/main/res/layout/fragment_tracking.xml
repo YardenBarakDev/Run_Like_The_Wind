@@ -17,7 +17,7 @@
         app:layout_constraintTop_toBottomOf="@+id/TrackingFragment_MapView_map">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvTimer"
+            android:id="@+id/TrackingFragment_LBL_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00:00"
@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toStartOf="@+id/TrackingFragment_BTN_finish_run"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+            app:layout_constraintTop_toBottomOf="@+id/TrackingFragment_LBL_time" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/TrackingFragment_BTN_finish_run"
@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/TrackingFragment_BTN_start_run"
-            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+            app:layout_constraintTop_toBottomOf="@+id/TrackingFragment_LBL_time" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

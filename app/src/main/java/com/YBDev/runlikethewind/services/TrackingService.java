@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
@@ -27,18 +28,32 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class TrackingService extends LifecycleService {
 
     private boolean isFirstRun = true;
+    private boolean serviceKilled = false;
+
     FusedLocationProviderClient fusedLocationProviderClient;
 
     public static MutableLiveData<Boolean> isTracking = new MutableLiveData<>();
     public static MutableLiveData<ArrayList<ArrayList<LatLng>>> pathPoints = new MutableLiveData<>(); //polylines
+    public static MutableLiveData<Long> timeRunInMillis = new MutableLiveData<>();
+    public static MutableLiveData<Long> timeRunInSeconds = new MutableLiveData<>();
+
     private ArrayList<ArrayList<LatLng>> polylines;
     private ArrayList<LatLng> polyline;
-    //polylines = ArrayList<ArrayList<LatLng>>
-    //polyline =  ArrayList<LatLng>
+
+    //timer variables
+    private boolean isTimerEnabled = false;
+    private long lapTime = 0L;
+    private long timeRun = 0L;
+    private long timeStarted = 0L;
+    private long lastSecondTimestamp = 0L;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -60,22 +75,22 @@ public class TrackingService extends LifecycleService {
                     if (isFirstRun) {
                         isFirstRun = false;
                         startForegroundService();
+                    }else{
+                        isTracking.setValue(true);
+                        isTracking.postValue(true);
+                        startTimer();
                     }
                     break;
                 case Constants.KEYS.ACTION_PAUSE_SERVICE:
-                    isTracking.postValue(false);
+                    pauseService();
                     break;
                 case Constants.KEYS.ACTION_STOP_SERVICE:
-                    stopSelf();
-                    Log.d("jjj", "onStartCommand:3");
+                    killService();
                     break;
             }
         }
         return super.onStartCommand(intent, flags, startId);
     }
-
-
-
 
     @SuppressLint("MissingPermission")//checked using EasyPermissions
     private void updateLocationTracking(Boolean tracking) {
@@ -97,56 +112,32 @@ public class TrackingService extends LifecycleService {
         else{
             fusedLocationProviderClient.removeLocationUpdates(locationCallback);
         }
-   }
+    }
 
-   LocationCallback locationCallback = new LocationCallback() {
-       @Override
-       public void onLocationResult(@NonNull LocationResult locationResult) {
-           super.onLocationResult(locationResult);
-           if (isTracking.getValue() != null){
-               for (Location location : locationResult.getLocations()){
-                   addPathPoint(location);
-               }
-           }
-       }
-   };
+    LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(@NonNull LocationResult locationResult) {
+            super.onLocationResult(locationResult);
+            if (isTracking.getValue() != null){
+                for (Location location : locationResult.getLocations()){
+                    addPathPoint(location);
+                }
+            }
+        }
+    };
 
     private void addPathPoint(Location location){
-        if (location != null){
-
+        if (location != null && isTracking.getValue()) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            //pathPoints.getValue().get(pathPoints.getValue().size() - 1 ).add(latLng);
             polyline.add(latLng);
-            polylines.add(polyline);
             pathPoints.postValue(polylines);
-
-
         }
     }
 
-    private void addEmptyPolyline() {
-        if (polylines != null){
-            polylines.get(polylines.size()).add(new LatLng(0,0));
-            pathPoints.postValue(polylines);
-        }else{
-            initValues();
-            addEmptyPolyline();
-        }
-    }
-
-    private void initValues(){
-        //isTracking = new MutableLiveData<>();
-        //pathPoints = new MutableLiveData<>();
-        polylines = new ArrayList<>();
-        polyline = new ArrayList<>();
-
-        isTracking.postValue(true);
-        pathPoints.postValue(polylines);
-    }
 
     private void startForegroundService(){
-        //addEmptyPolyline();
-        isTracking.postValue(true);
+        isTracking.setValue(true);
+        startTimer();
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -154,14 +145,49 @@ public class TrackingService extends LifecycleService {
         }
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(this, Constants.KEYS.NOTIFICATION_CHANNEL_ID).
-                setAutoCancel(false).
-                setOngoing(true).
-                setSmallIcon(R.drawable.ic_directions_run_black_24dp).
-                setContentTitle(Constants.KEYS.NOTIFICATION_APP_NAME).
-                setContentText("00:00:00").
-                setContentIntent(getMainActivityPendingIntent());
+                        setAutoCancel(false).
+                        setOngoing(true).
+                        setSmallIcon(R.drawable.ic_directions_run_black_24dp).
+                        setContentTitle(Constants.KEYS.NOTIFICATION_APP_NAME).
+                        setContentText("00:00:00").
+                        setContentIntent(getMainActivityPendingIntent());
 
         startForeground(Constants.KEYS.NOTIFICATION_ID, builder.build());
+    }
+
+    private void startTimer() {
+        timeStarted = System.currentTimeMillis();
+        isTimerEnabled = true;
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            while (isTracking.getValue()) {
+                // time difference between now and timeStarted
+                lapTime = System.currentTimeMillis() - timeStarted;
+                // post the new lapTime
+                timeRunInMillis.postValue(timeRun + lapTime);
+                if (timeRunInMillis.getValue()>= lastSecondTimestamp + 1000L) {
+                    timeRunInSeconds.postValue(timeRunInSeconds.getValue() + 1);
+                    lastSecondTimestamp += 1000L;
+                }
+                try {
+                    Thread.sleep(Constants.KEYS.TIMER_UPDATE_INTERVAL);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            timeRun += lapTime;
+        });
+    }
+
+    private void initValues(){
+        polylines = new ArrayList<>();
+        polyline = new ArrayList<>();
+        polylines.add(polyline);
+
+        isTracking.setValue(false);
+        pathPoints.setValue(polylines);
+        timeRunInSeconds.setValue(0L);
+        timeRunInMillis.setValue(0L);
     }
 
     private PendingIntent getMainActivityPendingIntent(){
@@ -170,7 +196,7 @@ public class TrackingService extends LifecycleService {
                 0,
                 new Intent(this, StartActivity.class).setAction(Constants.KEYS.ACTION_SHOW_TRACKING_FRAGMENT),
                 PendingIntent.FLAG_UPDATE_CURRENT
-                );
+        );
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -181,5 +207,20 @@ public class TrackingService extends LifecycleService {
                 NotificationManager.IMPORTANCE_LOW);
 
         notificationManager.createNotificationChannel(notificationChannel);
+    }
+
+    private void killService(){
+        serviceKilled = true;
+        isFirstRun = true;
+        pauseService();
+        initValues();
+        stopForeground(true);
+        stopSelf();
+    }
+
+    private void pauseService() {
+        isTracking.postValue(false);
+        polyline.clear();
+        isTimerEnabled = false;
     }
 }

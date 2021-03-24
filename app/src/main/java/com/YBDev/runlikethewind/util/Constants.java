@@ -19,12 +19,13 @@ public class Constants {
             String NOTIFICATION_CHANNEL_NAME = "Tracking";
             int NOTIFICATION_ID = 1;
 
-            long LOCATION_UPDATE_INTERVAL = 10000L;
-            long FASTEST_LOCATION_INTERVAL = 5000L;
+            long LOCATION_UPDATE_INTERVAL = 5000L;
+            long FASTEST_LOCATION_INTERVAL = 2000L;
 
 
             //MAP
             float POLYLINE_WIDTH = 8f;
             float MAP_ZOOM = 15f;
+            long TIMER_UPDATE_INTERVAL =  50L;
       }
 }
