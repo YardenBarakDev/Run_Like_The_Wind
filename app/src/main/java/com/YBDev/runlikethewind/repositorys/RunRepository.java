@@ -1,23 +1,25 @@
 package com.YBDev.runlikethewind.repositorys;
 
 import androidx.lifecycle.LiveData;
+
 import com.YBDev.runlikethewind.database.MyRoomDB;
 import com.YBDev.runlikethewind.database.Run;
 import com.YBDev.runlikethewind.database.RunDao;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class RunRepository {
 
     private final RunDao runDao;
-    private LiveData<List<Run>> runs;
-
+    private LiveData<List<Run>> allRuns;
     private static RunRepository instance;
 
     private RunRepository() {
         MyRoomDB database = MyRoomDB.getInstance();
         runDao = database.runDao();
-        runs = runDao.getAllRunesSortedByDate();
+        allRuns = runDao.getAllRunesSortedByDate();
     }
 
     public static RunRepository getInstance(){ return instance;}
@@ -34,21 +36,13 @@ public class RunRepository {
     }
 
     public void addRun(Run run){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runDao.insert(run);
-            }
-        });
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> runDao.insert(run));
     }
 
     public void deleteRun(Run run){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                runDao.delete(run);
-            }
-        });
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> runDao.delete(run));
     }
 
     public LiveData<List<Run>> getAllRunesSortedByDate(){
@@ -85,5 +79,9 @@ public class RunRepository {
 
     public LiveData<Long> getTotalTimeInMilliseconds(){
         return runDao.getTotalTimeInMilliseconds();
+    }
+
+    public LiveData<List<Run>> getAllRuns() {
+        return allRuns;
     }
 }

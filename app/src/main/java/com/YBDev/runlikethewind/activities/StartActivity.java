@@ -1,17 +1,11 @@
 package com.YBDev.runlikethewind.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.services.TrackingService;
 import com.YBDev.runlikethewind.util.Constants;
@@ -28,15 +22,12 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         setUpNavigation();
         navigateToTrackingFragment(getIntent());
-        NavHostFragment.findNavController(navHostFragment).addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-            @Override
-            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                if (destination.getId() == R.id.settings_Fragment || destination.getId() == R.id.run_Fragment || destination.getId() == R.id.statistics_Fragment)
-                    bottomNavigationView.setVisibility(View.VISIBLE);
-                else
-                    bottomNavigationView.setVisibility(View.GONE);
+        NavHostFragment.findNavController(navHostFragment).addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if (destination.getId() == R.id.settings_Fragment || destination.getId() == R.id.run_Fragment || destination.getId() == R.id.statistics_Fragment)
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            else
+                bottomNavigationView.setVisibility(View.GONE);
 
-            }
         });
 
 

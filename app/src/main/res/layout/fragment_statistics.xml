@@ -12,13 +12,13 @@
         android:layout_height="wrap_content"
         android:text="Total Distance"
         app:layout_constraintBottom_toTopOf="@+id/tvAverageSpeedInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalDistance"
+        app:layout_constraintEnd_toEndOf="@+id/statistics_Fragment_LBL_TotalDistance"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalDistance"
+        app:layout_constraintStart_toStartOf="@+id/statistics_Fragment_LBL_TotalDistance"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalDistance"
+        android:id="@+id/statistics_Fragment_LBL_TotalDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km"
@@ -33,13 +33,13 @@
         android:layout_height="wrap_content"
         android:text="Total Time"
         app:layout_constraintBottom_toTopOf="@+id/tvTotalCaloriesInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalTime"
+        app:layout_constraintEnd_toEndOf="@+id/statistics_Fragment_LBL_TotalTime"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalTime"
+        app:layout_constraintStart_toStartOf="@+id/statistics_Fragment_LBL_TotalTime"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalTime"
+        android:id="@+id/statistics_Fragment_LBL_TotalTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
@@ -54,13 +54,13 @@
         android:layout_height="wrap_content"
         android:text="Total Calories Burned"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalCalories"
+        app:layout_constraintEnd_toEndOf="@+id/statistics_Fragment_LBL_TotalCalories"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalCalories"
+        app:layout_constraintStart_toStartOf="@+id/statistics_Fragment_LBL_TotalCalories"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalCalories"
+        android:id="@+id/statistics_Fragment_LBL_TotalCalories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0kcal"
@@ -75,13 +75,13 @@
         android:layout_height="wrap_content"
         android:text="Average Speed"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="@+id/tvAverageSpeed"
+        app:layout_constraintEnd_toEndOf="@+id/statistics_Fragment_LBL_AverageSpeed"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvAverageSpeed"
+        app:layout_constraintStart_toStartOf="@+id/statistics_Fragment_LBL_AverageSpeed"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvAverageSpeed"
+        android:id="@+id/statistics_Fragment_LBL_AverageSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km/h"
@@ -105,7 +105,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
+        android:id="@+id/statistics_Fragment_barChart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

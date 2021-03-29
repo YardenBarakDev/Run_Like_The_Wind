@@ -7,10 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Looper;
-import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -18,6 +17,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
+
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.activities.StartActivity;
 import com.YBDev.runlikethewind.util.Constants;
@@ -27,10 +27,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class TrackingService extends LifecycleService {
 
@@ -118,7 +118,7 @@ public class TrackingService extends LifecycleService {
         @Override
         public void onLocationResult(@NonNull LocationResult locationResult) {
             super.onLocationResult(locationResult);
-            if (isTracking.getValue() != null){
+            if (isTracking.getValue() != null && isTracking.getValue()){
                 for (Location location : locationResult.getLocations()){
                     addPathPoint(location);
                 }
@@ -127,7 +127,7 @@ public class TrackingService extends LifecycleService {
     };
 
     private void addPathPoint(Location location){
-        if (location != null && isTracking.getValue()) {
+        if (location != null && isTracking.getValue() != null && isTracking.getValue()) {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             polyline.add(latLng);
             pathPoints.postValue(polylines);
@@ -160,19 +160,21 @@ public class TrackingService extends LifecycleService {
         isTimerEnabled = true;
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            while (isTracking.getValue()) {
-                // time difference between now and timeStarted
-                lapTime = System.currentTimeMillis() - timeStarted;
-                // post the new lapTime
-                timeRunInMillis.postValue(timeRun + lapTime);
-                if (timeRunInMillis.getValue()>= lastSecondTimestamp + 1000L) {
-                    timeRunInSeconds.postValue(timeRunInSeconds.getValue() + 1);
-                    lastSecondTimestamp += 1000L;
-                }
-                try {
-                    Thread.sleep(Constants.KEYS.TIMER_UPDATE_INTERVAL);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            if (isTracking.getValue() != null && timeRunInMillis.getValue() != null && timeRunInSeconds.getValue() != null ){
+                while (isTracking.getValue()) {
+                    // time difference between now and timeStarted
+                    lapTime = System.currentTimeMillis() - timeStarted;
+                    // post the new lapTime
+                    timeRunInMillis.postValue(timeRun + lapTime);
+                    if (timeRunInMillis.getValue()>= lastSecondTimestamp + 1000L) {
+                        timeRunInSeconds.postValue(timeRunInSeconds.getValue() + 1);
+                        lastSecondTimestamp += 1000L;
+                    }
+                    try {
+                        Thread.sleep(Constants.KEYS.TIMER_UPDATE_INTERVAL);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             timeRun += lapTime;
@@ -214,6 +216,10 @@ public class TrackingService extends LifecycleService {
         isFirstRun = true;
         pauseService();
         initValues();
+        lapTime = 0L;
+        timeRun = 0L;
+        timeStarted = 0L;
+        lastSecondTimestamp = 0L;
         stopForeground(true);
         stopSelf();
     }

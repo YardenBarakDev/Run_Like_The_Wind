@@ -58,7 +58,7 @@
                 android:id="@+id/SetupFragment_LBL_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/your_weight"
+                android:hint="@string/current_weight"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="3"

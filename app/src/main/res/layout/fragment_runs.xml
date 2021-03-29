@@ -6,34 +6,35 @@
     android:layout_height="match_parent">
 
     <Spinner
-        android:id="@+id/spFilter"
+        android:id="@+id/RunFragment_Spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:entries="@array/filter_options"
+        android:entries="@array/spinner_options"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvFilterBy"
+        android:id="@+id/spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sort by:"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/spFilter"
-        app:layout_constraintEnd_toStartOf="@+id/spFilter"
+        app:layout_constraintBottom_toBottomOf="@+id/RunFragment_Spinner"
+        app:layout_constraintEnd_toStartOf="@+id/RunFragment_Spinner"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRuns"
+        android:id="@+id/RunFragment_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spFilter" />
+        app:layout_constraintTop_toBottomOf="@+id/RunFragment_Spinner" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/RunFragment_FAB_create_new_run"

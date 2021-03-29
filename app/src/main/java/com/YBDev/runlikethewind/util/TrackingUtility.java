@@ -2,8 +2,12 @@ package com.YBDev.runlikethewind.util;
 
 import android.Manifest;
 import android.content.Context;
+import android.location.Location;
 import android.os.Build;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -26,6 +30,7 @@ public class TrackingUtility {
             );
         }
     }
+
     public static String getFormattedStopWatchTime(long ms, boolean forDialog)  {
         long milliseconds = ms;
         long hours = TimeUnit.MILLISECONDS.toHours(milliseconds);
@@ -45,5 +50,26 @@ public class TrackingUtility {
             return time;
         time += milliseconds >= 10 ? ":"+milliseconds : ":0"+ milliseconds;
         return time;
+    }
+
+    public static float calculateAllPolyLinesLength(ArrayList<LatLng> latLngs){
+        float distance = 0f;
+        LatLng pos1;
+        LatLng pos2;
+        float[] result = new float[1];
+
+        for (int i = 0; i < latLngs.size() - 2; i++) {
+            pos1 = latLngs.get(i);
+            pos2 = latLngs.get(i + 1);
+            Location.distanceBetween(
+                    pos1.latitude,
+                    pos1.longitude,
+                    pos2.latitude,
+                    pos2.longitude,
+                    result
+            );
+            distance += result[0];
+        }
+        return  distance;
     }
 }

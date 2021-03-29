@@ -7,13 +7,12 @@
 
 
     <ImageView
-        android:id="@+id/StartActivity_IMAGE_background"
+        android:id="@+id/SettingsFragment_IMAGE_background"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="fitXY"
         android:layout_above="@+id/StartActivity_LinearLayout"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_centerHorizontal="true"/>
     <LinearLayout
         android:id="@+id/StartActivity_LinearLayout"
         android:layout_width="match_parent"
@@ -24,7 +23,7 @@
         >
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/StartActivity_TF_fullName"
+            android:id="@+id/SettingsFragment_TF_fullName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -33,7 +32,7 @@
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/StartActivity_LBL_fullName"
+                android:id="@+id/SettingsFragment_LBL_fullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/full_name"
@@ -45,19 +44,22 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/StartActivity_TF_weight"
+            android:id="@+id/SettingsFragment_TF_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             app:errorEnabled="true"
-            app:startIconDrawable="@drawable/profile_icon"
+            app:startIconDrawable="@drawable/weight_icon"
+            app:startIconTintMode="screen"
+
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/StartActivity_LBL_weight"
+
+                android:id="@+id/SettingsFragment_LBL_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/your_weight"
+                android:hint="@string/current_weight"
                 android:inputType="number"
                 android:maxLines="1"
                 android:maxLength="3"
@@ -68,7 +70,7 @@
     </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/StartActivity_BTN_letsRun"
+        android:id="@+id/SettingsFragment_BTN_applyChanges"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/apply_changes"

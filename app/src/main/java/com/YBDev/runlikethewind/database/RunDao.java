@@ -6,13 +6,14 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+
 import java.util.List;
 
 @Dao
 public interface RunDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(Run... run);
+    void insert(Run run);
 
     @Delete
     void delete(Run run);

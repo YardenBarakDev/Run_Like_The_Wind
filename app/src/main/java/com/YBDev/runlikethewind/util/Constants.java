@@ -26,6 +26,13 @@ public class Constants {
             //MAP
             float POLYLINE_WIDTH = 8f;
             float MAP_ZOOM = 15f;
-            long TIMER_UPDATE_INTERVAL =  50L;
+
+            //timer
+            long TIMER_UPDATE_INTERVAL = 50L;
+
+            //SP
+            String FULL_NAME = "FULL_NAME";
+            String USER_WEIGHT = "USER_WEIGHT";
+
       }
 }
