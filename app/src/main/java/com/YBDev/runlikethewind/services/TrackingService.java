@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -17,7 +16,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.LifecycleService;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.activities.StartActivity;
 import com.YBDev.runlikethewind.util.Constants;
@@ -27,7 +25,6 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.model.LatLng;
-
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -49,10 +46,10 @@ public class TrackingService extends LifecycleService {
 
     //timer variables
     private boolean isTimerEnabled = false;
-    private long lapTime = 0L;
-    private long timeRun = 0L;
-    private long timeStarted = 0L;
-    private long lastSecondTimestamp = 0L;
+    private long lapTime;
+    private long timeRun;
+    private long timeStarted;
+    private long lastSecondTimestamp;
 
     @Override
     public void onCreate() {
@@ -185,11 +182,14 @@ public class TrackingService extends LifecycleService {
         polylines = new ArrayList<>();
         polyline = new ArrayList<>();
         polylines.add(polyline);
-
         isTracking.setValue(false);
         pathPoints.setValue(polylines);
         timeRunInSeconds.setValue(0L);
         timeRunInMillis.setValue(0L);
+        lapTime = 0L;
+        timeRun = 0L;
+        timeStarted = 0L;
+        lastSecondTimestamp = 0L;
     }
 
     private PendingIntent getMainActivityPendingIntent(){
@@ -216,10 +216,6 @@ public class TrackingService extends LifecycleService {
         isFirstRun = true;
         pauseService();
         initValues();
-        lapTime = 0L;
-        timeRun = 0L;
-        timeStarted = 0L;
-        lastSecondTimestamp = 0L;
         stopForeground(true);
         stopSelf();
     }

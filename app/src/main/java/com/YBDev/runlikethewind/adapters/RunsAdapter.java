@@ -6,16 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.database.Run;
+import com.YBDev.runlikethewind.util.TrackingUtility;
 import com.bumptech.glide.Glide;
 import com.google.android.material.textview.MaterialTextView;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -54,14 +51,11 @@ public class RunsAdapter extends RecyclerView.Adapter<RunsAdapter.ViewHolder> {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String dateString = formatter.format(new Date(run.getStartTimeInMilliseconds()));
 
-        DateFormat df = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
-        String formatted = df.format(run.getTotalTimeInMilliseconds());
-
         holder.avgSpeed.setText("Avg speed "+ run.getAvgSpeedInKMH());
         holder.calories.setText("Calories burned "+ run.getCaloriesBurned());
-        holder.date.setText("date " + dateString);
+        holder.date.setText("Date " + dateString);
         holder.distance.setText("Distance "+run.getDistanceInMeters()+"");
-        holder.time.setText("Run Time " + formatted);
+        holder.time.setText("Run Time " +  TrackingUtility.getFormattedStopWatchTime(run.getTotalTimeInMilliseconds(), true));
     }
 
     // total number of rows

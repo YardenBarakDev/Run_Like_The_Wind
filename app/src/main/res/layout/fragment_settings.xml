@@ -59,10 +59,10 @@
                 android:id="@+id/SettingsFragment_LBL_weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/current_weight"
-                android:inputType="number"
+                android:hint= "@string/current_weight"
+                android:inputType="numberDecimal"
                 android:maxLines="1"
-                android:maxLength="3"
+                android:maxLength="5"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>

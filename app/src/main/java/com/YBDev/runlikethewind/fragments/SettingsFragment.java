@@ -46,8 +46,11 @@ public class SettingsFragment extends Fragment {
     private void updateTexts() {
         MySP mySP = MySP.getInstance();
         SettingsFragment_LBL_fullName.setText(mySP.getString(Constants.KEYS.FULL_NAME, ""));
-        float weight = mySP.getFloat(Constants.KEYS.USER_WEIGHT, 0);
-        SettingsFragment_LBL_weight.setText(weight+"");
+        float weight = mySP.getFloat(Constants.KEYS.USER_WEIGHT, -1);
+        if (weight == -1)
+            SettingsFragment_LBL_weight.setText("");
+        else
+            SettingsFragment_LBL_weight.setText(weight+"");
     }
 
     private boolean checkInput() {
@@ -61,6 +64,8 @@ public class SettingsFragment extends Fragment {
         }catch (NumberFormatException e){
             return false;
         }
+        if (weightToFloat <= 0 || weightToFloat > 500 || fullName.length() < 1)
+            return  false;
         saveVariables(fullName, weightToFloat);
         return true;
     }

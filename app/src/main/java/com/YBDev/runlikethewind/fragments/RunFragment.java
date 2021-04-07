@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
-
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -17,18 +17,16 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.adapters.RunsAdapter;
 import com.YBDev.runlikethewind.database.Run;
 import com.YBDev.runlikethewind.util.Constants;
+import com.YBDev.runlikethewind.util.MySP;
 import com.YBDev.runlikethewind.util.SortType;
 import com.YBDev.runlikethewind.util.TrackingUtility;
 import com.YBDev.runlikethewind.viewModels.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.util.List;
-
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -40,6 +38,7 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
     private RecyclerView RunFragment_RecyclerView;
     private Spinner RunFragment_Spinner;
     private FloatingActionButton RunFragment_FAB_create_new_run;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (view == null)
@@ -57,10 +56,14 @@ public class RunFragment extends Fragment implements EasyPermissions.PermissionC
         RunFragment_FAB_create_new_run.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TrackingUtility.hasLocationPermissions(getContext()))
-                    clicked();
-                else
-                    requestPermissions();
+                if (MySP.getInstance().getFloat(Constants.KEYS.USER_WEIGHT, -1) != -1)
+                {
+                    if (TrackingUtility.hasLocationPermissions(getContext()))
+                        clicked();
+                    else
+                        requestPermissions();
+                }else
+                    Toast.makeText(getContext(), "Please fill your weight and name", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -3,19 +3,16 @@ package com.YBDev.runlikethewind.fragments;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.fragment.NavHostFragment;
-
 import com.YBDev.runlikethewind.R;
 import com.YBDev.runlikethewind.database.Run;
 import com.YBDev.runlikethewind.services.TrackingService;
@@ -45,10 +42,10 @@ public class TrackingFragment extends Fragment {
     private MaterialTextView TrackingFragment_LBL_time;
     private GoogleMap googleMap;
     private MapView TrackingFragment_MapView_map;
-
     private ArrayList<LatLng> latLngs;
     private ArrayList<LatLng> allLatLngs;
     private boolean isTracking = false;
+    private boolean newRun = true;
     private long curTimeInMillis;
 
 
@@ -68,9 +65,8 @@ public class TrackingFragment extends Fragment {
                 saveRunInDataBase();
             }catch (IllegalStateException e){
                 Toast.makeText(getContext(), "Run canceled", Toast.LENGTH_LONG).show();
-                endRun();
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_trackingFragment_to_run_Fragment);
             }
-
         });
 
         TrackingFragment_BTN_start_run.setOnClickListener(view -> toggleRun());
@@ -118,13 +114,12 @@ public class TrackingFragment extends Fragment {
         TrackingService.timeRunInMillis.observe(getViewLifecycleOwner(), new Observer<Long>() {
             @Override
             public void onChanged(Long aLong) {
-                curTimeInMillis = aLong;
-                String formatTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, false);
-                TrackingFragment_LBL_time.setText(formatTime);
+                    curTimeInMillis = aLong;
+                    String formatTime = TrackingUtility.getFormattedStopWatchTime(curTimeInMillis, false);
+                    TrackingFragment_LBL_time.setText(formatTime);
             }
         });
     }
-
 
 
     private void toggleRun(){
@@ -137,16 +132,21 @@ public class TrackingFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     private void updateTracking(boolean tracking){
-        isTracking = tracking;
-        if (!isTracking){
-            TrackingFragment_BTN_start_run.setText("resume");
-        }else
-            TrackingFragment_BTN_start_run.setText("pause");
+        if (newRun){
+            TrackingFragment_BTN_start_run.setText("Start");
+            newRun = false;
+        }else{
+            isTracking = tracking;
+            if (!isTracking){
+                TrackingFragment_BTN_start_run.setText("resume");
+            }else
+                TrackingFragment_BTN_start_run.setText("pause");
+        }
     }
 
     //move the camera to the user location
     private void moveCamera(){
-        if (latLngs != null && latLngs.size() > 0)
+        if (latLngs != null && latLngs.size() > 0 && googleMap != null)
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngs.get(latLngs.size() - 1), 20f));
 
     }
@@ -161,27 +161,27 @@ public class TrackingFragment extends Fragment {
                 CameraUpdateFactory.newLatLngBounds(latLngBounds.build(),
                         TrackingFragment_MapView_map.getWidth(),
                         TrackingFragment_MapView_map.getHeight(),
-                         Math.round(TrackingFragment_MapView_map.getHeight() * 0.05f))// this is the padding, so the polylines won't be at the edges
+                        Math.round(TrackingFragment_MapView_map.getHeight() * 0.05f))// this is the padding, so the polylines won't be at the edges
         );
     }
 
     //save the run in RoomDB
     private void saveRunInDataBase(){
         float weight = MySP.getInstance().getFloat(Constants.KEYS.USER_WEIGHT, 100);
-       googleMap.snapshot(bitmap -> {
-                   int distanceInMeters = Math.round(TrackingUtility.calculateAllPolyLinesLength(allLatLngs));
-                                                              //to kilometers            convert to hours
-                   float avgSpeed = Math.round((distanceInMeters* 1000f) / (TimeUnit.MILLISECONDS.toMinutes(curTimeInMillis)));
-                   long dateTimestamp = Calendar.getInstance().getTimeInMillis();
-                   int caloriesBurned = Math.round((distanceInMeters / 1000f) * weight);
-                   mainViewModel.addRun(new Run(bitmap, dateTimestamp, curTimeInMillis, avgSpeed, distanceInMeters, caloriesBurned));
-                   Log.d("jjjj", "saveRunInDataBase: saved");
-                   endRun();
-       });
+        googleMap.snapshot(bitmap -> {
+            int distanceInMeters = Math.round(TrackingUtility.calculateAllPolyLinesLength(allLatLngs));
+            //to kilometers            convert to hours
+            float avgSpeed = Math.round((distanceInMeters / 1000f) / (curTimeInMillis / 1000f / 60 / 60) * 10) / 10f;
+            long dateTimestamp = Calendar.getInstance().getTimeInMillis();
+            int caloriesBurned = Math.round((distanceInMeters / 1000f) * weight);
+            mainViewModel.addRun(new Run(bitmap, dateTimestamp, curTimeInMillis, avgSpeed, distanceInMeters, caloriesBurned));
+            endRun();
+        });
     }
 
     private void endRun() {
-        sendCommandToService(Constants.KEYS.ACTION_PAUSE_SERVICE);
+        TrackingFragment_LBL_time.setText("00:00:00:00");
+        sendCommandToService(Constants.KEYS.ACTION_STOP_SERVICE);
         NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_trackingFragment_to_run_Fragment);
     }
 
@@ -193,9 +193,9 @@ public class TrackingFragment extends Fragment {
 
             PolylineOptions polylineOptions = new PolylineOptions()
                     .color(R.color.primary).
-                    width(Constants.KEYS.POLYLINE_WIDTH)
+                            width(Constants.KEYS.POLYLINE_WIDTH)
                     .add(secondLastPolyline).
-                    add(lastPolyline);
+                            add(lastPolyline);
 
             googleMap.addPolyline(polylineOptions);
         }
